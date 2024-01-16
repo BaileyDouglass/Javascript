@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Three.js Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.141.0/build/three.min.js"></script>
+</head>
+<body>
+    <script>
+        // Three.js code will go here
+        var scene = new THREE.Scene();
+        
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 10;
+        
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        
+        var size = 10;
+        var divisions = 10;
+        
+        var gridHelper = new THREE.GridHelper(size, divisions);
+        gridHelper.position.y = -1;
+        scene.add(gridHelper);
+        
+        
+        var geometry = new THREE.BoxGeometry(1, 1, 1);
+        var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        var cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        var edges = new THREE.EdgesGeometry(cube.geometry);
+        var lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2 });
+
+        var cubeEdges = new THREE.LineSegments(edges, lineMaterial);
+        var scaleAmount = 1.05;
+        cubeEdges.scale.set(scaleAmount, scaleAmount, scaleAmount);
+
+        scene.add(cubeEdges);
+
+        // Camera Values
+        var radius = 7; // The distance from the center of the cube
+        var speed = 0.001; // The speed of rotation
+        var angle = 0; // Initial angle
+
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Rotate the cube
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+
+            cubeEdges.rotation.x = cube.rotation.x;
+            cubeEdges.rotation.y = cube.rotation.y;
+
+            // Update camera position
+            angle += speed;
+            camera.position.x = radius * Math.sin(angle);
+            camera.position.z = radius * Math.cos(angle);
+            camera.lookAt(cube.position); // Always look at the cube
+            camera.up.set(0, 1, 0); // Keep the Y-axis up
+
+            
+            renderer.render(scene, camera);
+        }
+        animate();
+        
+        
+    </script>
+</body>
+</html>
